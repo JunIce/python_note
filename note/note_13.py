@@ -10,6 +10,10 @@ Error
   (3) 调用不存在的方法将引发 AttributeError 异常。
   (4) 引用不存在的变量将引发 NameError 异常。
   (5) 未强制转换就混用数据类型将引发 TypeError 异常。
+
+open 方法可以接收三个参数:文件名、模式和缓冲区参数。
+  file.name
+  file.mode
 '''
 try:
   f = open('note/open.txt', 'r')
