@@ -68,6 +68,7 @@ class Student(object):
   def __lt__(self, s):  # __cmp__是py2.7的函数，python3取消了
     '''
       比较函数必须返回数值，而不是布尔值
+      0 为相等
     '''
     print(self,s, self.name < s.name)
     if self.score<s.score and self.name<s.name:
