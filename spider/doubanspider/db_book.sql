@@ -1,6 +1,6 @@
 CREATE TABLE `db_book` (
    `id` int(4) NOT NULL AUTO_INCREMENT,
-   `title` varchar(11) NOT NULL '',
+   `title` varchar(11) NOT NULL DEFAULT '',
    `titlepic` varchar(255) NOT NULL DEFAULT '',
    `writer` varchar(255) NOT NULL COMMENT '作者',
    `translater` VARCHAR(20) not null default '',

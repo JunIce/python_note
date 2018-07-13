@@ -33,7 +33,8 @@ def parseToDict(node):
   s = node.select('.pl')[0].string.split('/')
   if len(s) == 4: # 如果list不足4为，补齐
     s.insert(1,None)
-
+  pattern1 = re.compile('\d+(\.\d+)?')
+  s[4] = re.search(pattern1, s[-1]).group()
   n['writer'], n['translater'], n['publisher'], n['pub_at'], n['price'] = s
   return n
 
@@ -65,6 +66,33 @@ if __name__ == '__main__':
     'charset': 'utf8mb4'
   }
   db = Db(dbConf)
+  try:
+    '''
+      删除表
+    '''
+    dropSql = "DROP TABLE IF EXISTS db_book"
+    db.query(dropSql)
+  finally:
+    # 新建表
+    creatSql = '''
+      CREATE TABLE `db_book` (
+      `id` int(4) NOT NULL AUTO_INCREMENT,
+      `title` varchar(100) NOT NULL DEFAULT '',
+      `titlepic` varchar(255) NOT NULL DEFAULT '',
+      `writer` varchar(255) NOT NULL COMMENT '作者',
+      `translater` VARCHAR(20) not null default '',
+      `publisher` VARCHAR(20) not null default '',
+      `pub_at` VARCHAR(20) not null default '',
+      `price` DECIMAL(6,2) NOT null default '0.00',
+      `pl_nums` MEDIUMINT(10) NOT NULL default 0,
+      `vote_nums` MEDIUMINT(10) not null default 0,
+      `titleurl` varchar(50) NOT NULL DEFAULT '',
+      PRIMARY KEY (`id`)
+      ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+    '''
+    
+    db.query(creatSql)
+    
   sql = "INSERT INTO db_book (`title`, `titlepic`, `writer`, `translater`, `publisher`, `pub_at`, `price`, `pl_nums`, `vote_nums`, `titleurl`) VALUES('{title}', '{titlepic}', '{writer}', '{translater}', '{publisher}', '{pub_at}', '{price}', {pl_nums}, {vote_nums}, '{titleurl}')"
 
   nodes = getHTMLDom().select('.indent table')
