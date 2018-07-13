@@ -10,7 +10,7 @@ import time
 豆瓣top 250抓取
 url基本格式 https://book.douban.com/top250?start=25
 其中start值以params方式传入
-demo3实现多线程抓取
+demo4实现多线程抓取,改变多条一并插入的形式
 '''
 pattern = re.compile('\d+')
 
@@ -98,8 +98,8 @@ if __name__ == '__main__':
     
     db.query(creatSql)
     
-  sql = "INSERT INTO db_book (`title`, `titlepic`, `writer`, `translater`, `publisher`, `pub_at`, `price`, `pl_nums`, `vote_nums`, `titleurl`) VALUES('{title}', '{titlepic}', '{writer}', '{translater}', '{publisher}', '{pub_at}', '{price}', {pl_nums}, {vote_nums}, '{titleurl}')"
-
+  sql = "INSERT INTO db_book (`title`, `titlepic`, `writer`, `translater`, `publisher`, `pub_at`, `price`, `pl_nums`, `vote_nums`, `titleurl`) VALUES"
+  fm ="('{title}', '{titlepic}', '{writer}', '{translater}', '{publisher}', '{pub_at}', '{price}', {pl_nums}, {vote_nums}, '{titleurl}')"
   '''
     增加多线程抓取
   '''
@@ -110,10 +110,14 @@ if __name__ == '__main__':
     lock.acquire()
     print('线程%d开始时间：%d'%(i, start))
     nodes = getHTMLDom(i).select('.indent table')
+
+    ''' 由于sql单条插入性能比较差，优化为多条一起插入'''
+    sqls = []
     for node in nodes:
       n = parseToDict(node)
-      sql1 = sql.format(**n)
-      db.query(sql1)
+      sqls.append(fm.format(**n))
+    sql1 = sql + ','.join(sqls) # 转化为sql字符串
+    db.query(sql1)
     end = time.time()
     lock.release()
     print('线程%d结束时间：%d'%(i, end))
@@ -132,15 +136,16 @@ if __name__ == '__main__':
   db.close()
 
 '''
-线程0开始时间：1531448544
-线程0结束时间：1531448545线程1开始时间：1531448544
-线程1结束时间：1531448547线程2开始时间：1531448544
-线程2结束时间：1531448549线程3开始时间：1531448544
-线程3结束时间：1531448550线程4开始时间：1531448544
-线程4结束时间：1531448552线程5开始时间：1531448544
-线程5结束时间：1531448553线程6开始时间：1531448544
-线程6结束时间：1531448555线程7开始时间：1531448544
-线程7结束时间：1531448556线程8开始时间：1531448544
-线程8结束时间：1531448558线程9开始时间：1531448544
-线程9结束时间：1531448559
+线程0开始时间：1531460346
+线程0结束时间：1531460348线程1开始时间：1531460346
+线程1结束时间：1531460349线程2开始时间：1531460346
+线程2结束时间：1531460351线程3开始时间：1531460346
+线程3结束时间：1531460352线程4开始时间：1531460346
+线程4结束时间：1531460353线程5开始时间：1531460346
+线程5结束时间：1531460355线程6开始时间：1531460346
+线程6结束时间：1531460356线程7开始时间：1531460346
+线程7结束时间：1531460358线程8开始时间：1531460346
+线程8结束时间：1531460359
+线程9开始时间：1531460346
+线程9结束时间：1531460361
 '''
