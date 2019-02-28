@@ -25,9 +25,9 @@ class MainProcess():
     self.__p.join()
 
   def doContents(self):
-    for i in range(3415):
+    for i in range(3415, 3792):
       url = 'https://www.qinbing.cn' + self.__redis.lindex('page_url_new', i).decode('utf-8')
-      self.__p.apply_async(get_page_content_ori, args=(url,))
+      self.__p.apply_async(get_page_content, args=(url,))
     self.__p.close()
     self.__p.join()
 

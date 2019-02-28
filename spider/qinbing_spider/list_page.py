@@ -9,7 +9,7 @@ headers = {
             'Accept - Encoding':'gzip, deflate',
             'Accept-Language':'zh-Hans-CN, zh-Hans; q=0.5',
             'Connection':'Keep-Alive',
-            'Host':'zhannei.baidu.com',
+            'Host':'www.qinbing.cn/',
             'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116   Safari/537.36 Edge/15.15063'
           }
 
@@ -33,10 +33,12 @@ def get_page_content(url):
   ''' 请求html'''
   print(url)
   html = requests.get(url, headers=headers).text
+  print(html)
+
   dom = BeautifulSoup(html, 'html.parser')
   time = dom.find('h2').string
+  print(html)
   ctime = retime.findall(time)
-  print(ctime)
   '''时间初始化'''
   year = ctime[0][0]
   month = ctime[0][1]
@@ -46,11 +48,10 @@ def get_page_content(url):
   ptime = '{}/{}/{}'.format(year,month,day)
 
   nodes = dom.find_all('tr')
-  print(nodes)
   urls = []
   for node in nodes:
     n = {}
-    n['city'] = node.select('td')[0].contents[0] and node.select('td')[0].contents[0] or ''
+    n['city'] = node.select('td')[0].contents[0] and ''.join(node.select('td')[0].contents[0].string.split()) or ''
     n['price'] = node.select('td')[1].string and node.select('td')[1].string.replace('\xa0','') or 0
     n['trend'] = node.select('td')[2].string and node.select('td')[2].string or '-'
     n['year'] = year
@@ -92,3 +93,5 @@ def get_page_content_ori(url):
     n['province'] = province
     redis.lpush('content_new_ori', n)
     print(n)
+
+get_page_content('https://www.qinbing.cn/Portal/Index/detial/id/64232/type/357')
